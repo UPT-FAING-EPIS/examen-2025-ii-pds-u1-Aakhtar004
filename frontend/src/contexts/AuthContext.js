@@ -2,7 +2,8 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 
-export const AuthContext = createContext();
+// Create and export the authentication context
+export const AuthContext = createContext(null);
 
 export const useAuth = () => useContext(AuthContext);
 

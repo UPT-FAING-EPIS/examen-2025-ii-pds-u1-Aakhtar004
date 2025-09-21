@@ -8,7 +8,8 @@ RUN npm cache clean --force && \
     npm config set legacy-peer-deps true && \
     npm install --no-fund --no-audit && \
     npm install ajv@^8.0.0 ajv-keywords@^5.0.0 && \
-    npm dedupe
+    npm dedupe && \
+    npm cache clean --force
 
 # Copiar código fuente y construir
 COPY . ./
