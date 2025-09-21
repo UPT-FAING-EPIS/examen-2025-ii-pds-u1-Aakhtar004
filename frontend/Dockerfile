@@ -3,12 +3,14 @@ WORKDIR /app
 
 # Instalar dependencias
 COPY package*.json ./
-RUN npm config set loglevel error && \
-    npm install --legacy-peer-deps --no-fund --no-audit
+RUN npm cache clean --force && \
+    npm config set loglevel error && \
+    npm install --legacy-peer-deps --no-fund --no-audit && \
+    npm install ajv-keywords terser-webpack-plugin schema-utils --legacy-peer-deps
 
 # Copiar código fuente y construir
 COPY . ./
-RUN npm run build
+RUN CI=false npm run build
 
 # Imagen final con Nginx
 FROM nginx:alpine
