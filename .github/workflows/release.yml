@@ -7,6 +7,8 @@ on:
         description: 'Versión del release (formato: x.y.z)'
         required: true
   push:
+    branches:
+      - main
     tags:
       - 'v*'
 

@@ -3,8 +3,6 @@ name: Diagrama de Infraestructura
 on:
   workflow_dispatch:
   push:
-    paths:
-      - 'infra/**'
     branches:
       - main
 

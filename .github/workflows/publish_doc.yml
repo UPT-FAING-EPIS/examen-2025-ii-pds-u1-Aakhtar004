@@ -5,10 +5,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'docs/**'
-      - 'backend/**'
-      - 'frontend/src/**'
 
 jobs:
   build-and-deploy:
