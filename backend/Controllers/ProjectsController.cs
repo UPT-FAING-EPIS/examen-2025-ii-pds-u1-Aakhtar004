@@ -91,14 +91,14 @@ namespace ProjectManagementApi.Controllers
             return NoContent();
         }
 
-        [HttpPost("{projectId}/members/{memberId}")]
+        [HttpPost("{projectId}/members")]
         public async Task<IActionResult> AddMember(int projectId, [FromBody] AddMemberDto memberDto)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
                 return Unauthorized();
             var userId = int.Parse(userIdClaim.Value);
-            var result = await _projectService.AddMemberAsync(projectId, memberId, userId);
+            var result = await _projectService.AddMemberAsync(projectId, memberDto.MemberId, userId);
             
             if (!result)
             {

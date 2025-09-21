@@ -50,8 +50,14 @@ namespace ProjectManagementApi.DTOs
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public DateTime JoinedAt { get; set; }
+    }
+
+    public class AddMemberDto
+    {
+        [Required]
+        public int MemberId { get; set; }
     }
 }
