@@ -61,6 +61,19 @@ jobs:
           kubectl apply -f k8s/ingress.yml
 
       - name: Mostrar URL pública
-        run: |
-          echo "La aplicación está disponible en:"
-          kubectl get ingress project-management-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          id: get-url
+          run: |
+            echo "Esperando por la dirección IP pública del Ingress..."
+            
+            for i in {1..30}; do
+              INGRESS_IP=$(kubectl get ingress project-management-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+              if [ -n "$INGRESS_IP" ]; then
+                echo "La aplicación está disponible en: http://$INGRESS_IP"
+                exit 0
+              fi
+              echo "El Ingress aún no tiene una IP. Esperando 10 segundos..."
+              sleep 10
+            done
+            
+            echo "Error: El Ingress no obtuvo una dirección IP a tiempo."
+            exit 1

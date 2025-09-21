@@ -329,4 +329,3 @@ proyecto-gestion-actividades/
 
 ---
 
-¡Gracias por contribuir al desarrollo de este proyecto! Si tienes preguntas o sugerencias, no dudes en abrir un issue.

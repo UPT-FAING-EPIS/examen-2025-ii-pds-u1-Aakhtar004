@@ -2,6 +2,12 @@ name: Diagrama de Clases
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Diagrama de Infraestructura"]
+    types:
+      - completed
+    branches:
+      - main
   push:
     branches:
       - main
@@ -107,7 +113,30 @@ jobs:
           touch docs/diagrams/backend-class-diagram.png
           touch docs/diagrams/frontend-component-diagram.png
           
+          # Obtener los últimos cambios para evitar conflictos
+          git pull --rebase
+          
           # Agregar todos los diagramas generados
           git add docs/diagrams/*.png
           git commit -m "Actualizar diagramas de clases [skip ci]" || echo "No changes to commit"
-          git push
+          
+          # Intentar push con reintentos en caso de fallo
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            if git push; then
+              echo "Push exitoso"
+              break
+            else
+              RETRY_COUNT=$((RETRY_COUNT+1))
+              echo "Push fallido, reintento $RETRY_COUNT de $MAX_RETRIES"
+              git pull --rebase
+              sleep 5
+            fi
+          done
+          
+          if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+            echo "No se pudo hacer push después de $MAX_RETRIES intentos"
+            exit 1
+          fi
