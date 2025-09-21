@@ -65,6 +65,7 @@ jobs:
         run: |
           echo "Esperando por la dirección IP pública del Ingress..."
           
+          
           for i in {1..30}; do
             INGRESS_IP=$(kubectl get ingress project-management-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
             if [ -n "$INGRESS_IP" ]; then

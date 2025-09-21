@@ -4,11 +4,11 @@ metadata:
   name: project-management-ingress
   annotations:
     kubernetes.io/ingress.class: "gce"
-    kubernetes.io/ingress.global-static-ip-name: "project-management-ip"
+    kubernetes.io/ingress.global-static-ip-name: "gest-proy-ip"
     networking.gke.io/managed-certificates: "project-management-cert"
 spec:
   rules:
-  - host: project-management.example.com  # Cambiar por el dominio real
+  - host: gest-proy-akhtar.com  # Cambiar por el dominio real
     http:
       paths:
       - path: /api
