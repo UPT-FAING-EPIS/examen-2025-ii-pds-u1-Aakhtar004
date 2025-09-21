@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/gest-repo/frontend:latest
+        image: us-central1-docker.pkg.dev/gest-proy/gest-repo/frontend:latest
         ports:
         - containerPort: 80
         resources:
