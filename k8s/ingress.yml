@@ -32,4 +32,4 @@ metadata:
   name: project-management-cert
 spec:
   domains:
-  - gest-proy.com.  # Cambiar por el dominio real
+  - gest-proy.com # Cambiar por el dominio real

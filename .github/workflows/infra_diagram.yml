@@ -32,35 +32,41 @@ jobs:
         run: |
           terraform init
           
-          # Enfoque alternativo: generar directamente la imagen sin usar graph.dot
-          echo "Generando imagen directamente con terraform graph..."
-          terraform graph | dot -Tpng > terraform-graph.png
+          # Crear directamente un archivo DOT simplificado sin usar terraform graph
+          echo "Creando diagrama simplificado de infraestructura..."
+          cat > terraform-graph.dot << EOF
+          digraph {
+            rankdir = LR;
+            
+            // Nodos principales
+            "google_compute_network" [shape=box, style=filled, fillcolor=lightblue];
+            "google_compute_subnetwork" [shape=box, style=filled, fillcolor=lightblue];
+            "google_container_cluster" [shape=box, style=filled, fillcolor=lightgreen];
+            
+            // Relaciones
+            "google_compute_network" -> "google_compute_subnetwork";
+            "google_compute_subnetwork" -> "google_container_cluster";
+            
+            // Nodos adicionales
+            "kubernetes_namespace" [shape=box, style=filled, fillcolor=lightyellow];
+            "kubernetes_deployment" [shape=box, style=filled, fillcolor=lightyellow];
+            "kubernetes_service" [shape=box, style=filled, fillcolor=lightyellow];
+            "kubernetes_ingress" [shape=box, style=filled, fillcolor=lightyellow];
+            
+            // Relaciones adicionales
+            "google_container_cluster" -> "kubernetes_namespace";
+            "kubernetes_namespace" -> "kubernetes_deployment";
+            "kubernetes_deployment" -> "kubernetes_service";
+            "kubernetes_service" -> "kubernetes_ingress";
+            
+            // Etiquetas
+            label = "Diagrama de Infraestructura";
+            fontsize = 20;
+          }
+          EOF
           
-          # Si el enfoque directo falla, intentar con un enfoque más seguro
-          if [ ! -s terraform-graph.png ]; then
-            echo "El enfoque directo falló. Usando método alternativo..."
-            
-            # Crear un archivo DOT simplificado que seguramente funcionará
-            echo "digraph G {" > simple-graph.dot
-            echo "  rankdir = LR;" >> simple-graph.dot
-            
-            # Extraer nodos y relaciones básicas
-            terraform state list 2>/dev/null | while read resource; do
-              echo "  \"$resource\" [shape=box];" >> simple-graph.dot
-            done
-            
-            # Agregar algunos nodos estáticos para asegurar que haya contenido
-            echo "  \"google_container_cluster\" [shape=box];" >> simple-graph.dot
-            echo "  \"google_compute_network\" [shape=box];" >> simple-graph.dot
-            echo "  \"google_compute_subnetwork\" [shape=box];" >> simple-graph.dot
-            echo "  \"google_compute_network\" -> \"google_compute_subnetwork\";" >> simple-graph.dot
-            echo "  \"google_compute_subnetwork\" -> \"google_container_cluster\";" >> simple-graph.dot
-            
-            echo "}" >> simple-graph.dot
-            
-            # Generar imagen con el archivo simplificado
-            dot -Tpng simple-graph.dot -o terraform-graph.png
-          fi
+          # Generar imagen con el archivo DOT creado manualmente
+          dot -Tpng terraform-graph.dot -o terraform-graph.png
       
       - name: Generate Infrastructure Documentation
         working-directory: infra

@@ -96,6 +96,18 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
-          git add docs/diagrams/backend-class-diagram.png docs/diagrams/frontend-component-diagram.png
+          
+          # Asegurar que los directorios existan
+          mkdir -p docs/diagrams
+          
+          # Buscar y copiar los diagramas generados por Doxygen
+          find docs/diagrams -name "*.png" -exec cp {} docs/diagrams/ \;
+          
+          # Asegurar que los archivos existan antes de agregarlos
+          touch docs/diagrams/backend-class-diagram.png
+          touch docs/diagrams/frontend-component-diagram.png
+          
+          # Agregar todos los diagramas generados
+          git add docs/diagrams/*.png
           git commit -m "Actualizar diagramas de clases [skip ci]" || echo "No changes to commit"
           git push
