@@ -32,10 +32,10 @@ jobs:
       
       - name: Generate Backend Class Diagram
         run: |
-          dotnet tool install --global dotnet-umlgen
+          dotnet tool install --global PlantUmlClassDiagramGenerator
           mkdir -p docs/diagrams
-          dotnet umlgen backend -o docs/diagrams/backend-class-diagram.puml
-          java -jar plantuml.jar docs/diagrams/backend-class-diagram.puml
+          puml-gen backend docs/diagrams -dir -public -createAssociation
+          java -jar plantuml.jar docs/diagrams/include.puml -o docs/diagrams/backend-class-diagram
       
       - name: Generate Frontend Component Diagram
         run: |
