@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementApi.Models;
+using TaskEntity = ProjectManagementApi.Models.Task;
 
 namespace ProjectManagementApi.Data
 {
@@ -13,7 +14,7 @@ namespace ProjectManagementApi.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectMember> ProjectMembers { get; set; }
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<TaskEntity> Tasks { get; set; }
         public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -65,7 +66,7 @@ namespace ProjectManagementApi.Data
                 .HasForeignKey(t => t.AssignedTo)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            modelBuilder.Entity<Task>()
+            modelBuilder.Entity<TaskEntity>()
                 .Property(t => t.Status)
                 .HasConversion<string>();
 

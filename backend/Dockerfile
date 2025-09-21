@@ -22,6 +22,9 @@ RUN apt-get update && apt-get install -y wget && \
 # Variables de entorno
 ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
+# Configuración adicional de seguridad
+ENV DOTNET_EnableDiagnostics=0
+ENV COMPlus_EnableDiagnostics=0
 
 EXPOSE 8080
 

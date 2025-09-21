@@ -16,7 +16,7 @@ namespace ProjectManagementApi.Models
         public int TaskId { get; set; }
 
         [ForeignKey("TaskId")]
-        public Task Task { get; set; }
+        public ProjectManagementApi.Models.Task Task { get; set; }
 
         [Required]
         public int UserId { get; set; }

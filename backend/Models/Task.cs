@@ -27,7 +27,7 @@ namespace ProjectManagementApi.Models
         public User AssignedUser { get; set; }
 
         [Required]
-        public TaskStatus Status { get; set; } = TaskStatus.Pending;
+        public TaskStatusEnum Status { get; set; } = TaskStatusEnum.Pending;
 
         [Required]
         public DateTime DueDate { get; set; }
@@ -37,7 +37,7 @@ namespace ProjectManagementApi.Models
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 
-    public enum TaskStatus
+    public enum TaskStatusEnum
     {
         Pending,
         InProgress,

@@ -128,7 +128,7 @@ namespace ProjectManagementApi.Services
                 ProjectId = taskDto.ProjectId,
                 Title = taskDto.Title,
                 Description = taskDto.Description,
-                Status = "pending",
+                Status = TaskStatusEnum.Pending,
                 AssignedTo = taskDto.AssignedTo
             };
 
@@ -327,7 +327,27 @@ namespace ProjectManagementApi.Services
                 return null;
             }
 
-            task.Status = status;
+            // Convertir el string a TaskStatusEnum
+            TaskStatusEnum taskStatus;
+            switch (status)
+            {
+                case "pending":
+                    taskStatus = TaskStatusEnum.Pending;
+                    break;
+                case "in_progress":
+                    taskStatus = TaskStatusEnum.InProgress;
+                    break;
+                case "completed":
+                    taskStatus = TaskStatusEnum.Completed;
+                    break;
+                default:
+                    // Si llegamos aquí, es porque el estado es "blocked", que no está en el enum
+                    // Por defecto, lo dejamos como Pending
+                    taskStatus = TaskStatusEnum.Pending;
+                    break;
+            }
+
+            task.Status = taskStatus;
             task.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
