@@ -21,7 +21,10 @@ namespace ProjectManagementApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProjects()
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var projects = await _projectService.GetAllProjectsAsync(userId);
             return Ok(projects);
         }
@@ -29,7 +32,10 @@ namespace ProjectManagementApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjectById(int id)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var project = await _projectService.GetProjectByIdAsync(id, userId);
             
             if (project == null)
@@ -43,7 +49,10 @@ namespace ProjectManagementApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectDto projectDto)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var project = await _projectService.CreateProjectAsync(projectDto, userId);
             return CreatedAtAction(nameof(GetProjectById), new { id = project.Id }, project);
         }
@@ -51,7 +60,10 @@ namespace ProjectManagementApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProject(int id, [FromBody] UpdateProjectDto projectDto)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var project = await _projectService.UpdateProjectAsync(id, projectDto, userId);
             
             if (project == null)
@@ -65,7 +77,10 @@ namespace ProjectManagementApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var result = await _projectService.DeleteProjectAsync(id, userId);
             
             if (!result)
@@ -77,9 +92,12 @@ namespace ProjectManagementApi.Controllers
         }
 
         [HttpPost("{projectId}/members/{memberId}")]
-        public async Task<IActionResult> AddMember(int projectId, int memberId)
+        public async Task<IActionResult> AddMember(int projectId, [FromBody] AddMemberDto memberDto)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var result = await _projectService.AddMemberAsync(projectId, memberId, userId);
             
             if (!result)
@@ -93,7 +111,10 @@ namespace ProjectManagementApi.Controllers
         [HttpDelete("{projectId}/members/{memberId}")]
         public async Task<IActionResult> RemoveMember(int projectId, int memberId)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var result = await _projectService.RemoveMemberAsync(projectId, memberId, userId);
             
             if (!result)

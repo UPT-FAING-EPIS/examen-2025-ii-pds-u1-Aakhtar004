@@ -20,7 +20,7 @@ namespace ProjectManagementApi.Controllers
         {
             var result = await _authService.LoginAsync(loginDto);
             
-            if (result == null)
+            if (result == null || result.Token == null)
             {
                 return Unauthorized(new { message = "Credenciales inválidas" });
             }

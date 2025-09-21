@@ -26,7 +26,7 @@ namespace ProjectManagementApi.Services
             
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
             {
-                return null;
+                return new AuthResponseDto();
             }
 
             var token = GenerateJwtToken(user);

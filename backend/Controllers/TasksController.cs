@@ -21,7 +21,10 @@ namespace ProjectManagementApi.Controllers
         [HttpGet("project/{projectId}")]
         public async Task<IActionResult> GetTasksByProject(int projectId)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var tasks = await _taskService.GetTasksByProjectAsync(projectId, userId);
             
             if (tasks == null)
@@ -35,7 +38,10 @@ namespace ProjectManagementApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTaskById(int id)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var task = await _taskService.GetTaskByIdAsync(id, userId);
             
             if (task == null)
@@ -47,9 +53,12 @@ namespace ProjectManagementApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTask([FromBody] CreateTaskDto taskDto)
+        public async Task<IActionResult> CreateTask(CreateTaskDto taskDto)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var task = await _taskService.CreateTaskAsync(taskDto, userId);
             
             if (task == null)
@@ -61,9 +70,12 @@ namespace ProjectManagementApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTask(int id, [FromBody] UpdateTaskDto taskDto)
+        public async Task<IActionResult> UpdateTask(int id, UpdateTaskDto taskDto)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var task = await _taskService.UpdateTaskAsync(id, taskDto, userId);
             
             if (task == null)
@@ -77,7 +89,10 @@ namespace ProjectManagementApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(int id)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var result = await _taskService.DeleteTaskAsync(id, userId);
             
             if (!result)
@@ -91,7 +106,10 @@ namespace ProjectManagementApi.Controllers
         [HttpPut("{id}/assign/{assignedTo}")]
         public async Task<IActionResult> AssignTask(int id, int assignedTo)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var task = await _taskService.AssignTaskAsync(id, assignedTo, userId);
             
             if (task == null)
@@ -105,7 +123,10 @@ namespace ProjectManagementApi.Controllers
         [HttpPut("{id}/status/{status}")]
         public async Task<IActionResult> UpdateTaskStatus(int id, string status)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var task = await _taskService.UpdateTaskStatusAsync(id, status, userId);
             
             if (task == null)
@@ -117,9 +138,12 @@ namespace ProjectManagementApi.Controllers
         }
 
         [HttpPost("{taskId}/comments")]
-        public async Task<IActionResult> AddComment(int taskId, [FromBody] CreateCommentDto commentDto)
+        public async Task<IActionResult> AddComment(int taskId, CreateCommentDto commentDto)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+            var userId = int.Parse(userIdClaim.Value);
             var comment = await _taskService.AddCommentAsync(taskId, commentDto, userId);
             
             if (comment == null)

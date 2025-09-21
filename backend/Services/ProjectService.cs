@@ -57,7 +57,7 @@ namespace ProjectManagementApi.Services
 
             if (project == null)
             {
-                return null;
+                return new ProjectDto();
             }
 
             return new ProjectDto

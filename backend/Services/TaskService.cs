@@ -22,7 +22,7 @@ namespace ProjectManagementApi.Services
 
             if (!hasAccess)
             {
-                return null;
+                return Enumerable.Empty<TaskDto>();
             }
 
             var tasks = await _context.Tasks
@@ -67,7 +67,7 @@ namespace ProjectManagementApi.Services
 
             if (task == null)
             {
-                return null;
+                return new TaskDto();
             }
 
             // Verificar que el usuario tiene acceso al proyecto
@@ -76,7 +76,7 @@ namespace ProjectManagementApi.Services
 
             if (!hasAccess)
             {
-                return null;
+                return new TaskDto();
             }
 
             return new TaskDto
@@ -314,7 +314,7 @@ namespace ProjectManagementApi.Services
 
             if (task == null)
             {
-                return null;
+                return new TaskDto();
             }
 
             // Verificar que el usuario tiene acceso al proyecto
@@ -323,7 +323,7 @@ namespace ProjectManagementApi.Services
 
             if (!hasAccess)
             {
-                return null;
+                return new TaskDto();
             }
 
             // Verificar que el estado es válido
@@ -390,7 +390,7 @@ namespace ProjectManagementApi.Services
 
             if (task == null)
             {
-                return null;
+                return new CommentDto();
             }
 
             // Verificar que el usuario tiene acceso al proyecto
@@ -399,7 +399,7 @@ namespace ProjectManagementApi.Services
 
             if (!hasAccess)
             {
-                return null;
+                return new CommentDto();
             }
 
             var comment = new Comment
