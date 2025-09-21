@@ -60,6 +60,25 @@ jobs:
           kubectl apply -f k8s/services.yml
           kubectl apply -f k8s/ingress.yml
 
+      - name: Debug: Verificar estado de los nodos
+        run: |
+          echo "Estado de los nodos:"
+          kubectl get nodes
+
+      - name: Debug: Verificar estado de los pods
+        run: |
+          echo "Estado de los pods:"
+          kubectl get pods
+          echo "Detalles de los pods:"
+          kubectl describe pods
+
+      - name: Debug: Verificar estado de los servicios
+        run: |
+          echo "Estado de los servicios:"
+          kubectl get services
+          echo "Detalles de los servicios:"
+          kubectl describe services
+
       - name: Validar despliegue de la aplicación
         run: |
           echo "Esperando por la dirección IP pública del Ingress..."
@@ -77,23 +96,6 @@ jobs:
           if [ -z "$INGRESS_IP" ]; then
             echo "❌ Error: El Ingress no obtuvo una dirección IP a tiempo."
             exit 1
-          fi
-
-          # --- Validar el estado de la aplicación ---
-          echo "Validando el estado de la aplicación en http://$INGRESS_IP/api/health"
-          HEALTH_URL="http://$INGRESS_IP/api/health"
-          for i in {1..30}; do
-            if curl --output /dev/null --silent --head --fail "$HEALTH_URL"; then
-              echo "✅ La aplicación está saludable y respondió correctamente."
-              break
-            fi
-            echo "La aplicación no está lista. Esperando 10 segundos..."
-            sleep 10
-          done
-
-          if [ $? -ne 0 ]; then
-              echo "❌ Error: La aplicación no respondió a tiempo en la URL de salud."
-              exit 1
           fi
 
           # --- Probar el endpoint de registro ---

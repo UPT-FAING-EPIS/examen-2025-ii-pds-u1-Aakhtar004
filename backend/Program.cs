@@ -10,7 +10,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Configuración de servicios
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Project Management API",
+        Version = "v1",
+        Description = "API para gestión de proyectos"
+    });
+});
 
 // Configuración de la base de datos
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
