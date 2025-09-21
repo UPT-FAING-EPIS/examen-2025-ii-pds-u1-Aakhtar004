@@ -56,28 +56,28 @@ namespace ProjectManagementApi.Services
             });
         }
 
-        public async Task<TaskDto> GetTaskByIdAsync(int id, int userId)
+        public async Task<TaskDto?> GetTaskByIdAsync(int id, int userId)
+    {
+        var task = await _context.Tasks
+            .Include(t => t.Project)
+            .Include(t => t.AssignedUser)
+            .Include(t => t.Comments)
+                .ThenInclude(c => c.User)
+            .FirstOrDefaultAsync(t => t.Id == id);
+
+        if (task == null)
         {
-            var task = await _context.Tasks
-                .Include(t => t.Project)
-                .Include(t => t.AssignedUser)
-                .Include(t => t.Comments)
-                    .ThenInclude(c => c.User)
-                .FirstOrDefaultAsync(t => t.Id == id);
+            return null;
+        }
 
-            if (task == null)
-            {
-                return new TaskDto();
-            }
+        // Verificar que el usuario tiene acceso al proyecto
+        var hasAccess = await _context.Projects
+            .AnyAsync(p => p.Id == task.ProjectId && (p.CreatedBy == userId || p.Members.Any(m => m.UserId == userId)));
 
-            // Verificar que el usuario tiene acceso al proyecto
-            var hasAccess = await _context.Projects
-                .AnyAsync(p => p.Id == task.ProjectId && (p.CreatedBy == userId || p.Members.Any(m => m.UserId == userId)));
-
-            if (!hasAccess)
-            {
-                return new TaskDto();
-            }
+        if (!hasAccess)
+        {
+            return null;
+        }
 
             return new TaskDto
             {
@@ -103,17 +103,17 @@ namespace ProjectManagementApi.Services
             };
         }
 
-        public async Task<TaskDto> CreateTaskAsync(CreateTaskDto taskDto, int userId)
-        {
-            // Verificar que el usuario tiene acceso al proyecto
-            var project = await _context.Projects
-                .Include(p => p.Members)
-                .FirstOrDefaultAsync(p => p.Id == taskDto.ProjectId && (p.CreatedBy == userId || p.Members.Any(m => m.UserId == userId)));
+        public async Task<TaskDto?> CreateTaskAsync(CreateTaskDto taskDto, int userId)
+    {
+        // Verificar que el usuario tiene acceso al proyecto
+        var project = await _context.Projects
+            .Include(p => p.Members)
+            .FirstOrDefaultAsync(p => p.Id == taskDto.ProjectId && (p.CreatedBy == userId || p.Members.Any(m => m.UserId == userId)));
 
-            if (project == null)
-            {
-                return null;
-            }
+        if (project == null)
+        {
+            return null;
+        }
 
             // Verificar que el usuario asignado es miembro del proyecto
             if (taskDto.AssignedTo.HasValue)

@@ -114,7 +114,7 @@ namespace ProjectManagementApi.Services
                 Name = project.Name,
                 Description = project.Description,
                 CreatedBy = project.CreatedBy,
-                CreatorName = creator.Name,
+                CreatorName = creator?.Name ?? string.Empty,
                 StartDate = project.StartDate,
                 EndDate = project.EndDate,
                 CreatedAt = project.CreatedAt,
@@ -124,8 +124,8 @@ namespace ProjectManagementApi.Services
                     {
                         Id = projectMember.Id,
                         UserId = userId,
-                        Name = creator.Name,
-                        Email = creator.Email,
+                        Name = creator?.Name ?? string.Empty,
+                        Email = creator?.Email ?? string.Empty,
                         JoinedAt = projectMember.JoinedAt
                     }
                 },
@@ -133,19 +133,19 @@ namespace ProjectManagementApi.Services
             };
         }
 
-        public async Task<ProjectDto> UpdateProjectAsync(int id, UpdateProjectDto projectDto, int userId)
-        {
-            var project = await _context.Projects
-                .Include(p => p.Creator)
-                .Include(p => p.Members)
-                    .ThenInclude(m => m.User)
-                .Include(p => p.Tasks)
-                .FirstOrDefaultAsync(p => p.Id == id && p.CreatedBy == userId);
+        public async Task<ProjectDto?> UpdateProjectAsync(int id, UpdateProjectDto projectDto, int userId)
+    {
+        var project = await _context.Projects
+            .Include(p => p.Creator)
+            .Include(p => p.Members)
+                .ThenInclude(m => m.User)
+            .Include(p => p.Tasks)
+            .FirstOrDefaultAsync(p => p.Id == id && p.CreatedBy == userId);
 
-            if (project == null)
-            {
-                return null;
-            }
+        if (project == null)
+        {
+            return null;
+        }
 
             project.Name = projectDto.Name;
             project.Description = projectDto.Description;

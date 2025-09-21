@@ -21,7 +21,7 @@ namespace ProjectManagementApi.Models
         public string PasswordHash { get; set; } = string.Empty;
 
         [Required]
-        public UserRole Role { get; set; } = UserRole.Developer;
+        public UserRole Role { get; set; } = UserRole.User;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
