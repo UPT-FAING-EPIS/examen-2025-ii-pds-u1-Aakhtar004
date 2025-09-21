@@ -1,0 +1,76 @@
+name: Crear Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versión del release (formato: x.y.z)'
+        required: true
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      
+      - name: Build Backend
+        run: |
+          cd backend
+          dotnet restore
+          dotnet build --configuration Release
+          dotnet publish -c Release -o ../publish/backend
+      
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+          mkdir -p ../publish/frontend
+          cp -r build/* ../publish/frontend/
+      
+      - name: Create Release ZIP
+        run: |
+          mkdir -p artifacts
+          zip -r artifacts/backend.zip publish/backend/
+          zip -r artifacts/frontend.zip publish/frontend/
+          zip -r artifacts/k8s-manifests.zip k8s/
+          zip -r artifacts/infra.zip infra/
+      
+      - name: Generate Release Notes
+        run: |
+          echo "# Release ${{ github.event.inputs.version || github.ref_name }}" > RELEASE_NOTES.md
+          echo "## Cambios en esta versión" >> RELEASE_NOTES.md
+          git log $(git describe --tags --abbrev=0 2>/dev/null || echo HEAD~10)..HEAD --pretty=format:"* %s" >> RELEASE_NOTES.md
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/backend.zip
+            artifacts/frontend.zip
+            artifacts/k8s-manifests.zip
+            artifacts/infra.zip
+          body_path: RELEASE_NOTES.md
+          draft: false
+          prerelease: false
+          name: Release ${{ github.event.inputs.version || github.ref_name }}
+          tag_name: ${{ github.event.inputs.version || github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

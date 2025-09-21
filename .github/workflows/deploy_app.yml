@@ -1,0 +1,59 @@
+name: Despliegue de Aplicación
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+      - 'backend/**'
+      - 'k8s/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Autenticación en GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Configuración de gcloud
+        run: |
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud config set compute/region us-central1
+
+      # Construir imágenes y subir a Artifact Registry
+      - name: Configurar Docker
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Build & Push Frontend Docker Image
+        run: |
+          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-app/frontend:latest ./frontend
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-app/frontend:latest
+
+      - name: Build & Push Backend Docker Image
+        run: |
+          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-app/backend:latest ./backend
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-app/backend:latest
+
+      # Deploy a Kubernetes
+      - name: Obtener credenciales cluster
+        run: gcloud container clusters get-credentials project-management-cluster --region us-central1
+
+      - name: Desplegar en GKE
+        run: |
+          kubectl apply -f k8s/frontend-deployment.yml
+          kubectl apply -f k8s/backend-deployment.yml
+          kubectl apply -f k8s/services.yml
+          kubectl apply -f k8s/ingress.yml
+
+      - name: Mostrar URL pública
+        run: |
+          echo "La aplicación está disponible en:"
+          kubectl get ingress project-management-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}'

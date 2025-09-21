@@ -1,0 +1,43 @@
+name: Infraestructura
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'infra/**'
+    branches:
+      - main
+
+jobs:
+  infra-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Autenticación en GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Configuración de gcloud
+        run: |
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud config set compute/region us-central1
+
+      # Terraform init, plan, apply
+      - name: Instalar Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        working-directory: infra
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: infra
+        run: terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -var="db_password=${{ secrets.DB_PASSWORD }}"
+
+      - name: Terraform Apply
+        working-directory: infra
+        run: terraform apply -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -var="db_password=${{ secrets.DB_PASSWORD }}"

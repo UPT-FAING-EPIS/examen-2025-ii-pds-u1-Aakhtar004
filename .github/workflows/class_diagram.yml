@@ -1,0 +1,56 @@
+name: Diagrama de Clases
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - 'frontend/src/**'
+
+jobs:
+  generate-class-diagram:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+      
+      - name: Install PlantUML
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-jre graphviz
+          wget -O plantuml.jar https://github.com/plantuml/plantuml/releases/download/v1.2023.10/plantuml-1.2023.10.jar
+      
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      
+      - name: Generate Backend Class Diagram
+        run: |
+          dotnet tool install --global dotnet-umlgen
+          mkdir -p docs/diagrams
+          dotnet umlgen backend -o docs/diagrams/backend-class-diagram.puml
+          java -jar plantuml.jar docs/diagrams/backend-class-diagram.puml
+      
+      - name: Generate Frontend Component Diagram
+        run: |
+          npm install -g react-uml
+          mkdir -p docs/diagrams
+          react-uml frontend/src -o docs/diagrams/frontend-component-diagram.puml
+          java -jar plantuml.jar docs/diagrams/frontend-component-diagram.puml
+      
+      - name: Commit and Push Diagrams
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add docs/diagrams/backend-class-diagram.png docs/diagrams/frontend-component-diagram.png
+          git commit -m "Actualizar diagramas de clases [skip ci]" || echo "No changes to commit"
+          git push

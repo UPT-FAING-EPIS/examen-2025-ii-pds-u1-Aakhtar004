@@ -1,0 +1,53 @@
+name: Diagrama de Infraestructura
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'infra/**'
+    branches:
+      - main
+
+jobs:
+  generate-diagram:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+      
+      - name: Install Graphviz
+        run: sudo apt-get install -y graphviz
+      
+      - name: Install terraform-docs
+        run: |
+          curl -Lo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz
+          tar -xzf terraform-docs.tar.gz
+          chmod +x terraform-docs
+          sudo mv terraform-docs /usr/local/bin/
+      
+      - name: Generate Terraform Graph
+        working-directory: infra
+        run: |
+          terraform init
+          terraform graph > graph.dot
+          dot -Tpng graph.dot -o terraform-graph.png
+      
+      - name: Generate Infrastructure Documentation
+        working-directory: infra
+        run: |
+          terraform-docs markdown . > infra-docs.md
+      
+      - name: Commit and Push Diagram
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          mkdir -p docs/diagrams
+          cp infra/terraform-graph.png docs/diagrams/
+          cp infra/infra-docs.md docs/
+          git add docs/diagrams/terraform-graph.png docs/infra-docs.md
+          git commit -m "Actualizar diagrama de infraestructura [skip ci]" || echo "No changes to commit"
+          git push

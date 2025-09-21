@@ -1,0 +1,66 @@
+name: Publicar Documentación
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'backend/**'
+      - 'frontend/src/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+      
+      - name: Install DocFX
+        run: dotnet tool install -g docfx
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      
+      - name: Install JSDoc
+        run: npm install -g jsdoc
+      
+      - name: Generate Backend Documentation
+        run: |
+          mkdir -p docs/api/backend
+          docfx init -q -o docs/api/backend
+          docfx docs/api/backend/docfx.json
+      
+      - name: Generate Frontend Documentation
+        run: |
+          mkdir -p docs/api/frontend
+          jsdoc frontend/src -r -d docs/api/frontend
+      
+      - name: Build Documentation Site
+        run: |
+          mkdir -p docs/site
+          cp -r docs/api docs/site/
+          cp -r docs/diagrams docs/site/
+          echo "# Documentación del Proyecto" > docs/site/index.md
+          echo "## Diagramas" >> docs/site/index.md
+          echo "- [Diagrama de Infraestructura](diagrams/terraform-graph.png)" >> docs/site/index.md
+          echo "- [Diagrama de Clases Backend](diagrams/backend-class-diagram.png)" >> docs/site/index.md
+          echo "- [Diagrama de Componentes Frontend](diagrams/frontend-component-diagram.png)" >> docs/site/index.md
+          echo "## Documentación API" >> docs/site/index.md
+          echo "- [Backend API](api/backend)" >> docs/site/index.md
+          echo "- [Frontend API](api/frontend)" >> docs/site/index.md
+      
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs/site
+          branch: gh-pages

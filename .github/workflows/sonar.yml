@@ -1,0 +1,36 @@
+name: Análisis de Código con SonarQube
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+      - 'backend/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarqube:
+    name: SonarQube Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=project-management-app
+            -Dsonar.projectName='Aplicación de Gestión de Proyectos'
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.coverage.exclusions=**/node_modules/**,**/tests/**
+            -Dsonar.exclusions=**/node_modules/**,**/tests/**
+            -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
+            -Dsonar.cs.opencover.reportsPaths=backend/coverage.opencover.xml
