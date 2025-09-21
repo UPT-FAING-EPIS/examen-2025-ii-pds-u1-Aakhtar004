@@ -17,7 +17,7 @@ jobs:
       - name: Autenticación en GCP
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Configuración de gcloud
         run: |
