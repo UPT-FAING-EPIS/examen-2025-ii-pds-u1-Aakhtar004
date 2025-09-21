@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ProjectManagementApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+[Route("api/health")]
     public class HealthController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;
