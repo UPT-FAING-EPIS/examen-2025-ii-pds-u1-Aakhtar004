@@ -32,9 +32,41 @@ jobs:
       
       - name: Generate Backend Class Diagram
         run: |
-          dotnet tool install --global PlantUmlClassDiagramGenerator
+          # Usar un enfoque alternativo con Doxygen para generar diagramas UML
+          sudo apt-get install -y doxygen
           mkdir -p docs/diagrams
-          puml-gen backend docs/diagrams -dir -public -createAssociation
+          
+          # Crear archivo de configuración para Doxygen
+          cat > Doxyfile << EOF
+          OUTPUT_DIRECTORY       = docs/diagrams
+          EXTRACT_ALL            = YES
+          EXTRACT_PRIVATE        = NO
+          EXTRACT_PACKAGE        = YES
+          EXTRACT_STATIC         = YES
+          RECURSIVE              = YES
+          HAVE_DOT               = YES
+          UML_LOOK               = YES
+          CALL_GRAPH             = YES
+          CALLER_GRAPH           = YES
+          DOT_IMAGE_FORMAT       = png
+          INPUT                  = backend
+          EOF
+          
+          # Generar documentación y diagramas
+          doxygen Doxyfile
+          
+          # Crear un archivo PlantUML simple para mantener compatibilidad
+          echo "@startuml" > docs/diagrams/include.puml
+          echo "title Backend Class Diagram" >> docs/diagrams/include.puml
+          echo "package backend {" >> docs/diagrams/include.puml
+          find backend -name "*.cs" | xargs grep -l "class\|interface" | while read file; do
+            classname=$(basename "$file" .cs)
+            echo "  class $classname" >> docs/diagrams/include.puml
+          done
+          echo "}" >> docs/diagrams/include.puml
+          echo "@enduml" >> docs/diagrams/include.puml
+          
+          # Generar diagrama con PlantUML
           java -jar plantuml.jar docs/diagrams/include.puml -o docs/diagrams/backend-class-diagram
       
       - name: Generate Frontend Component Diagram

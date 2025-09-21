@@ -31,7 +31,7 @@ jobs:
         working-directory: infra
         run: |
           terraform init
-          terraform graph > graph.dot
+          terraform graph | sed 's/-\([0-9]\+\)e/"\1"e/g' | sed 's/\([0-9A-F]\+\)A/\1_A/g' > graph.dot
           dot -Tpng graph.dot -o terraform-graph.png
       
       - name: Generate Infrastructure Documentation
