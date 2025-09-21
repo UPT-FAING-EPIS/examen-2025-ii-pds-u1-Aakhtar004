@@ -21,10 +21,11 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: https://sonarcloud.io
         with:
           args: >
-            -Dsonar.projectKey=project-management-app
+            -Dsonar.projectKey=ahmed-akhtar_gest-proy
+            -Dsonar.organization=ahmed-akhtar
             -Dsonar.projectName='Aplicación de Gestión de Proyectos'
             -Dsonar.qualitygate.wait=true
             -Dsonar.coverage.exclusions=**/node_modules/**,**/tests/**
