@@ -5,12 +5,14 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm cache clean --force && \
     npm config set loglevel error && \
-    npm install --legacy-peer-deps --no-fund --no-audit && \
-    npm install ajv-keywords terser-webpack-plugin schema-utils --legacy-peer-deps
+    npm config set legacy-peer-deps true && \
+    npm install --no-fund --no-audit && \
+    npm install ajv@^8.0.0 ajv-keywords@^5.0.0 && \
+    npm dedupe
 
 # Copiar código fuente y construir
 COPY . ./
-RUN CI=false npm run build
+RUN CI=false NODE_OPTIONS=--max_old_space_size=4096 npm run build
 
 # Imagen final con Nginx
 FROM nginx:alpine
