@@ -1,9 +1,10 @@
-FROM node:16-alpine AS build
+FROM node:18-alpine AS build
 WORKDIR /app
 
 # Instalar dependencias
 COPY package*.json ./
-RUN npm install
+RUN npm config set loglevel error && \
+    npm install --legacy-peer-deps --no-fund --no-audit
 
 # Copiar código fuente y construir
 COPY . ./
