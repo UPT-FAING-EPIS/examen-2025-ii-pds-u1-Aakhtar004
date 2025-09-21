@@ -41,6 +41,7 @@ namespace ProjectManagementApi.Models
     {
         Pending,
         InProgress,
-        Completed
+        Completed,
+        Blocked
     }
 }

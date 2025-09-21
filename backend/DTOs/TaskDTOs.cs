@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using ProjectManagementApi.Models;
 
 namespace ProjectManagementApi.DTOs
 {
@@ -11,9 +12,10 @@ namespace ProjectManagementApi.DTOs
         public string ProjectName { get; set; }
         public int? AssignedTo { get; set; }
         public string AssignedUserName { get; set; }
-        public string Status { get; set; }
+        public TaskStatusEnum Status { get; set; }
         public DateTime DueDate { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public List<CommentDto> Comments { get; set; }
     }
 
