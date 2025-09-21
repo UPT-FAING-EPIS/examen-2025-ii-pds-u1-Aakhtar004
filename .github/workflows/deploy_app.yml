@@ -60,19 +60,19 @@ jobs:
           kubectl apply -f k8s/services.yml
           kubectl apply -f k8s/ingress.yml
 
-      - name: Debug: Verificar estado de los nodos
+      - name: Debug Verificar estado de los nodos
         run: |
           echo "Estado de los nodos:"
           kubectl get nodes
 
-      - name: Debug: Verificar estado de los pods
+      - name: Debug Verificar estado de los pods
         run: |
           echo "Estado de los pods:"
           kubectl get pods
           echo "Detalles de los pods:"
           kubectl describe pods
 
-      - name: Debug: Verificar estado de los servicios
+      - name: Debug Verificar estado de los servicios
         run: |
           echo "Estado de los servicios:"
           kubectl get services
