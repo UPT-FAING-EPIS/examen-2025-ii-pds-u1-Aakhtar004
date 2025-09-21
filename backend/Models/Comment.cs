@@ -10,19 +10,19 @@ namespace ProjectManagementApi.Models
         public int Id { get; set; }
 
         [Required]
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
 
         [Required]
         public int TaskId { get; set; }
 
         [ForeignKey("TaskId")]
-        public ProjectManagementApi.Models.Task Task { get; set; }
+        public ProjectManagementApi.Models.Task Task { get; set; } = null!;
 
         [Required]
         public int UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public User User { get; set; }
+        public User User { get; set; } = null!;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

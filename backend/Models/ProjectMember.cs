@@ -13,13 +13,13 @@ namespace ProjectManagementApi.Models
         public int ProjectId { get; set; }
 
         [ForeignKey("ProjectId")]
-        public Project Project { get; set; }
+        public Project Project { get; set; } = null!;
 
         [Required]
         public int UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public User User { get; set; }
+        public User User { get; set; } = null!;
 
         public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
     }

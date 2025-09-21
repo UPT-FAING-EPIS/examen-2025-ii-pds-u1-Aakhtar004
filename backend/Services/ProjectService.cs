@@ -46,7 +46,7 @@ namespace ProjectManagementApi.Services
             });
         }
 
-        public async Task<ProjectDto> GetProjectByIdAsync(int id, int userId)
+        public async Task<ProjectDto?> GetProjectByIdAsync(int id, int userId)
         {
             var project = await _context.Projects
                 .Include(p => p.Creator)
@@ -57,7 +57,7 @@ namespace ProjectManagementApi.Services
 
             if (project == null)
             {
-                return new ProjectDto();
+                return null;
             }
 
             return new ProjectDto

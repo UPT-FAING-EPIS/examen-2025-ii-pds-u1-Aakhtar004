@@ -41,7 +41,7 @@ namespace ProjectManagementApi.Services
             };
         }
 
-        public async Task<AuthResponseDto> RegisterAsync(RegisterDto registerDto)
+        public async Task<AuthResponseDto?> RegisterAsync(RegisterDto registerDto)
         {
             if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
             {

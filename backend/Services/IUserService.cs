@@ -5,8 +5,8 @@ namespace ProjectManagementApi.Services
 {
     public interface IUserService
     {
-        Task<User> GetUserByIdAsync(int id);
+        Task<User?> GetUserByIdAsync(int id);
         Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<User> UpdateUserAsync(int id, User user);
+        Task<User?> UpdateUserAsync(int id, User user);
     }
 }

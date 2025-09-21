@@ -12,6 +12,7 @@ namespace ProjectManagementApi.DTOs
         public string ProjectName { get; set; } = string.Empty;
         public int? AssignedTo { get; set; }
         public string? AssignedUserName { get; set; }
+        public string? AssignedToName { get; set; }
         public TaskStatusEnum Status { get; set; }
         public DateTime DueDate { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -63,6 +64,6 @@ namespace ProjectManagementApi.DTOs
     public class CreateCommentDto
     {
         [Required]
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
     }
 }

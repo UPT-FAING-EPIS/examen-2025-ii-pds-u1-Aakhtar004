@@ -165,7 +165,7 @@ namespace ProjectManagementApi.Services
         {
             var task = await _context.Tasks
                 .Include(t => t.Project)
-                .Include(t => t.AssignedToUser)
+                .Include(t => t.AssignedUser)
                 .Include(t => t.Comments)
                     .ThenInclude(c => c.User)
                 .FirstOrDefaultAsync(t => t.Id == id);
@@ -307,7 +307,7 @@ namespace ProjectManagementApi.Services
         {
             var task = await _context.Tasks
                 .Include(t => t.Project)
-                .Include(t => t.AssignedToUser)
+                .Include(t => t.AssignedUser)
                 .Include(t => t.Comments)
                     .ThenInclude(c => c.User)
                 .FirstOrDefaultAsync(t => t.Id == id);
@@ -367,7 +367,7 @@ namespace ProjectManagementApi.Services
                 Description = task.Description,
                 Status = task.Status,
                 AssignedTo = task.AssignedTo,
-                AssignedToName = task.AssignedToUser?.Name,
+                AssignedToName = task.AssignedUser?.Name,
                 CreatedAt = task.CreatedAt,
                 UpdatedAt = task.UpdatedAt,
                 Comments = task.Comments.Select(c => new CommentDto

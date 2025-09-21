@@ -11,20 +11,20 @@ namespace ProjectManagementApi.Models
 
         [Required]
         [MaxLength(255)]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [Required]
         public int ProjectId { get; set; }
 
         [ForeignKey("ProjectId")]
-        public Project Project { get; set; }
+        public Project Project { get; set; } = null!;
 
         public int? AssignedTo { get; set; }
 
         [ForeignKey("AssignedTo")]
-        public User AssignedUser { get; set; }
+        public User? AssignedUser { get; set; }
 
         [Required]
         public TaskStatusEnum Status { get; set; } = TaskStatusEnum.Pending;
@@ -33,6 +33,8 @@ namespace ProjectManagementApi.Models
         public DateTime DueDate { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
