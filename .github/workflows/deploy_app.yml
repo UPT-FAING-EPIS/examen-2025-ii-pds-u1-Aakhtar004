@@ -40,7 +40,7 @@ jobs:
 
       # Deploy a Kubernetes
       - name: Obtener credenciales cluster
-        run: gcloud container clusters get-credentials project-management-cluster --region us-central1
+        run: gcloud container clusters get-credentials gest-cluster --region us-central1
 
       - name: Desplegar en GKE
         run: |
