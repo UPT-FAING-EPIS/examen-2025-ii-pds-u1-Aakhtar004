@@ -11,11 +11,11 @@ namespace ProjectManagementApi.Data
         {
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Project> Projects { get; set; }
-        public DbSet<ProjectMember> ProjectMembers { get; set; }
-        public DbSet<TaskEntity> Tasks { get; set; }
-        public DbSet<Comment> Comments { get; set; }
+        public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Project> Projects { get; set; } = null!;
+        public DbSet<ProjectMember> ProjectMembers { get; set; } = null!;
+        public DbSet<TaskEntity> Tasks { get; set; } = null!;
+        public DbSet<Comment> Comments { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,13 +54,13 @@ namespace ProjectManagementApi.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Configuración de Task
-            modelBuilder.Entity<Task>()
+            modelBuilder.Entity<TaskEntity>()
                 .HasOne(t => t.Project)
                 .WithMany(p => p.Tasks)
                 .HasForeignKey(t => t.ProjectId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Task>()
+            modelBuilder.Entity<TaskEntity>()
                 .HasOne(t => t.AssignedUser)
                 .WithMany()
                 .HasForeignKey(t => t.AssignedTo)
