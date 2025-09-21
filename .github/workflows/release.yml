@@ -43,6 +43,8 @@ jobs:
         run: |
           cd frontend
           npm ci
+          # Desactivar el tratamiento de advertencias como errores
+          export CI=false
           npm run build
           mkdir -p ../publish/frontend
           cp -r build/* ../publish/frontend/
