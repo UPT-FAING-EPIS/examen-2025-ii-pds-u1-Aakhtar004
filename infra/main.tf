@@ -68,7 +68,7 @@ resource "google_container_node_pool" "primary_nodes" {
     }
 
     machine_type = "e2-standard-2"
-    disk_size_gb = 100
+    disk_size_gb = 50 # Reducido a 50 GB para cumplir con la cuota regional
     disk_type    = "pd-standard"
     
     # Habilitamos Workload Identity a nivel de nodo
