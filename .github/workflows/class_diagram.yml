@@ -71,9 +71,25 @@ jobs:
       
       - name: Generate Frontend Component Diagram
         run: |
-          npm install -g react-uml
+          # Usar madge para generar un diagrama de dependencias en lugar de react-uml
+          npm install -g madge
           mkdir -p docs/diagrams
-          react-uml frontend/src -o docs/diagrams/frontend-component-diagram.puml
+          
+          # Generar diagrama de dependencias en formato DOT
+          madge --image docs/diagrams/frontend-component-diagram.png --extensions js,jsx frontend/src
+          
+          # Crear también un archivo PlantUML para mantener compatibilidad
+          echo "@startuml" > docs/diagrams/frontend-component-diagram.puml
+          echo "title Frontend Component Diagram" >> docs/diagrams/frontend-component-diagram.puml
+          echo "package frontend {" >> docs/diagrams/frontend-component-diagram.puml
+          find frontend/src -name "*.js" -o -name "*.jsx" | while read file; do
+            component=$(basename "$file" | sed 's/\.[^.]*$//')
+            echo "  component $component" >> docs/diagrams/frontend-component-diagram.puml
+          done
+          echo "}" >> docs/diagrams/frontend-component-diagram.puml
+          echo "@enduml" >> docs/diagrams/frontend-component-diagram.puml
+          
+          # Generar diagrama con PlantUML como respaldo
           java -jar plantuml.jar docs/diagrams/frontend-component-diagram.puml
       
       - name: Commit and Push Diagrams
