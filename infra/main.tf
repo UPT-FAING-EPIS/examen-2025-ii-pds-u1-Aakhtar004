@@ -7,6 +7,13 @@ provider "google" {
 resource "google_compute_network" "vpc" {
   name                    = "gke-network"
   auto_create_subnetworks = false
+  
+  lifecycle {
+    # Prevenir la destrucción de este recurso
+    prevent_destroy = true
+    # Ignorar cambios en estos atributos
+    ignore_changes = all
+  }
 }
 
 # Subred para el clúster GKE
@@ -15,6 +22,11 @@ resource "google_compute_subnetwork" "subnet" {
   ip_cidr_range = "10.0.0.0/24"
   region        = var.region
   network       = google_compute_network.vpc.id
+  
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = all
+  }
 }
 
 # Cluster GKE
@@ -45,6 +57,11 @@ resource "google_container_cluster" "primary" {
   # Habilitamos Workload Identity
   workload_identity_config {
     workload_pool = "${var.project_id}.svc.id.goog"
+  }
+  
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = all
   }
 }
 
@@ -107,6 +124,11 @@ resource "google_sql_database_instance" "postgres" {
       record_client_address   = true
     }
   }
+  
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = all
+  }
 }
 
 # Base de datos dentro de la instancia
@@ -126,6 +148,13 @@ resource "google_sql_user" "db_user" {
 resource "google_service_account" "cloudsql_proxy" {
   account_id   = "cloudsql-proxy"
   display_name = "Cloud SQL Auth Proxy Service Account"
+  
+  lifecycle {
+    # Prevenir la destrucción de este recurso
+    prevent_destroy = true
+    # Ignorar cambios en estos atributos
+    ignore_changes = all
+  }
 }
 
 # Asignación de rol para Cloud SQL Auth Proxy
