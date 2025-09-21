@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-import { jwt_decode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 // Create and export the authentication context
 export const AuthContext = createContext(null);
@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const decoded = jwt_decode(token);
+        const decoded = jwtDecode(token);
         const currentTime = Date.now() / 1000;
         
         if (decoded.exp > currentTime) {
