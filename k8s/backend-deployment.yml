@@ -18,7 +18,7 @@ spec:
       - name: backend
         image: us-central1-docker.pkg.dev/gest-proy/gest-repo/backend:latest
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         env:
         - name: ConnectionStrings__DefaultConnection
           valueFrom:
@@ -45,9 +45,15 @@ spec:
             memory: "256Mi"
         readinessProbe:
           httpGet:
-            path: /health
-            port: 80
+            path: /api/health
+            port: 8080
           initialDelaySeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
           periodSeconds: 5
 ---
 apiVersion: v1
