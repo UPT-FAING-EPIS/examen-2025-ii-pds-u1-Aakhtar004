@@ -3,11 +3,12 @@ kind: Ingress
 metadata:
   name: project-management-ingress
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: project-management-ip
+    kubernetes.io/ingress.global-static-ip-name: gest-proy-ip
     networking.gke.io/managed-certificates: project-management-cert
 spec:
   rules:
-  - http:
+  - host: gest-proy-akhtar.com
+    http:
       paths:
       - path: /
         pathType: Prefix
