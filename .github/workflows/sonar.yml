@@ -1,4 +1,4 @@
-name: Análisis de Código con SonarQube
+name: Análisis de Código con SonarCloud
 
 on:
   workflow_dispatch:
@@ -10,25 +10,24 @@ on:
 
 jobs:
   sonarqube:
-    name: SonarQube Scan
+    name: SonarCloud Scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
         with:
           args: >
             -Dsonar.projectKey=ahmed-akhtar_gest-proy
             -Dsonar.organization=ahmed-akhtar
-            -Dsonar.projectName='Aplicación de Gestión de Proyectos'
+            -Dsonar.projectName="Aplicación de Gestión de Proyectos"
             -Dsonar.qualitygate.wait=true
             -Dsonar.coverage.exclusions=**/node_modules/**,**/tests/**
             -Dsonar.exclusions=**/node_modules/**,**/tests/**
             -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
             -Dsonar.cs.opencover.reportsPaths=backend/coverage.opencover.xml
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
